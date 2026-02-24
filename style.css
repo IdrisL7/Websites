@@ -91,6 +91,24 @@ a {
   color: #444;
 }
 
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+}
+
+.header__nav-link {
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #444;
+  transition: color 0.2s ease;
+}
+
+.header__nav-link:hover {
+  color: #1c1c1c;
+}
+
 
 /* ============================================
    HERO
@@ -612,6 +630,25 @@ a {
   letter-spacing: -0.02em;
 }
 
+.pitch__cta {
+  font-size: 1.7rem;
+  line-height: 1.6;
+  color: #444;
+  margin-top: 1.4rem;
+}
+
+.pitch__cta a,
+.pitch__rate-link {
+  color: #1c1c1c;
+  border-bottom: 1.5px solid rgba(28, 28, 28, 0.3);
+  transition: border-color 0.2s ease;
+}
+
+.pitch__cta a:hover,
+.pitch__rate-link:hover {
+  border-bottom-color: #1c1c1c;
+}
+
 @media (max-width: 900px) {
   .pitch {
     padding: 4rem 2.4rem;
@@ -1126,6 +1163,29 @@ a {
 
   .pitch__outcome {
     border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .pitch__cta {
+    color: #bbb;
+  }
+
+  .pitch__cta a,
+  .pitch__rate-link {
+    color: #e5e5e5;
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .pitch__cta a:hover,
+  .pitch__rate-link:hover {
+    border-bottom-color: #e5e5e5;
+  }
+
+  .header__nav-link {
+    color: #999;
+  }
+
+  .header__nav-link:hover {
+    color: #e5e5e5;
   }
 
   .contact__text {
