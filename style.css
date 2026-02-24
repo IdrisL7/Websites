@@ -201,18 +201,6 @@ a {
   transform: scaleX(1);
 }
 
-.nav__number {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #888;
-  letter-spacing: 0.04em;
-  transition: color 0.3s ease;
-}
-
-.nav__item:hover .nav__number {
-  color: #1c1c1c;
-}
-
 .nav__label {
   font-size: 1.6rem;
   font-weight: 500;
@@ -466,6 +454,25 @@ a {
   font-size: 1.5rem;
   line-height: 1.6;
   color: #1c1c1c;
+}
+
+.portfolio__image-wrap {
+  margin-top: 2.4rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.portfolio__image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+
+.portfolio__image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
 }
 
 .portfolio__outcome strong {
@@ -964,10 +971,6 @@ a {
     color: #999;
   }
 
-  .nav__number {
-    color: #777;
-  }
-
   .nav__item:hover {
     background-color: rgba(255, 255, 255, 0.06);
   }
@@ -975,10 +978,6 @@ a {
   .nav__item::after,
   .footer__link::after {
     background: #e5e5e5;
-  }
-
-  .nav__item:hover .nav__number {
-    color: #e5e5e5;
   }
 
   .about__text {
@@ -1086,6 +1085,10 @@ a {
 
   .portfolio__outcome {
     color: #e5e5e5;
+  }
+
+  .portfolio__image:hover {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
   }
 
   .pitch__lead {
