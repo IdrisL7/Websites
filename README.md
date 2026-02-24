@@ -12,7 +12,7 @@ Personal portfolio website for Idris Lamina, IT Consultant and Implementation Le
 |---|---|---|
 | Home | `/` | Landing page with name, tagline, and navigation |
 | About | `/about` | Background, experience, and skills |
-| Portfolio | `/works` | Selected enterprise SaaS implementation projects |
+| Consulting Portfolio | `/works` | Selected enterprise SaaS implementation and consulting projects |
 | Project Portfolio | `/portfolio` | Personal project showcase with screenshots |
 | Pitch | `/pitch` | Engagement models and day/retainer rates |
 | Contact | `/contact` | Enquiry form and direct contact details |
