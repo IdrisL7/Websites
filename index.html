@@ -12,6 +12,8 @@
   <meta property="og:url" content="https://idrislamina.com">
   <meta property="og:image" content="https://idrislamina.com/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#ebebeb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
   <link rel="canonical" href="https://idrislamina.com/">
   <script type="application/ld+json">
   {
@@ -51,7 +53,7 @@
   <!-- Header -->
   <header class="header">
     <div class="header__left">
-      <span class="header__icon">✳</span>
+      <span class="header__icon" aria-hidden="true">✳</span>
       <span class="header__tagline">Open for consulting,<br>contracting, and advisory services</span>
     </div>
   </header>
@@ -70,23 +72,29 @@
       <span class="nav__label">About</span>
     </a>
     <a href="works" class="nav__item">
-      <span class="nav__label">Consulting Portfolio</span>
+      <span class="nav__label">Consulting</span>
     </a>
     <a href="portfolio" class="nav__item">
-      <span class="nav__label">Project Portfolio</span>
+      <span class="nav__label">Projects</span>
     </a>
     <a href="pitch" class="nav__item">
-      <span class="nav__label">Pitch</span>
+      <span class="nav__label">Services</span>
     </a>
     <a href="contact" class="nav__item">
       <span class="nav__label">Contact</span>
     </a>
   </nav>
 
+  <!-- CTA -->
+  <section class="cta">
+    <p class="cta__text">Looking for a delivery lead, automation partner, or web build?</p>
+    <a href="pitch" class="cta__button">See how I can help &rarr;</a>
+  </section>
+
   <!-- About Section -->
   <section class="about">
     <div class="about__col about__col--left">
-      <span class="about__star">✦</span>
+      <span class="about__star" aria-hidden="true">✦</span>
       <p class="about__text">
         Idris Lamina is an IT consultant
         from London, England specialising in
@@ -99,7 +107,7 @@
 
     <div class="about__col about__col--center">
       <div class="about__illustration">
-        <svg class="about__scene" viewBox="0 0 320 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="about__scene" viewBox="0 0 320 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of laptops, tablets, and workflow diagrams representing IT consulting work">
           <!-- Main laptop (center) -->
           <g class="float-1">
             <rect x="105" y="100" width="110" height="75" rx="6" stroke="#1c1c1c" stroke-width="2.5" fill="#ebebeb"/>
@@ -195,7 +203,7 @@
     </div>
 
     <div class="about__col about__col--right">
-      <span class="about__star">✦</span>
+      <span class="about__star" aria-hidden="true">✦</span>
       <p class="about__text">
         Dedicated to ensuring customer
         success and low risk.
@@ -208,6 +216,7 @@
     <span class="footer__copy">&copy; 2026 Idris Lamina</span>
     <div class="footer__socials">
       <a href="https://www.linkedin.com/in/idris-lamina/" class="footer__link" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="https://github.com/IdrisL7" class="footer__link" aria-label="GitHub" target="_blank" rel="noopener noreferrer">GitHub</a>
     </div>
   </footer>
 </body>

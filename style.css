@@ -226,6 +226,73 @@ a {
 }
 
 /* ============================================
+   HOMEPAGE CTA
+   ============================================ */
+
+.cta {
+  text-align: center;
+  padding: 4rem 4.8rem 2rem;
+  animation: fadeUp 0.8s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cta__text {
+  font-size: 1.5rem;
+  color: #666;
+  margin-bottom: 2rem;
+  letter-spacing: 0.01em;
+}
+
+.cta__button {
+  display: inline-block;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ebebeb;
+  background: #1c1c1c;
+  padding: 1.4rem 3.6rem;
+  border-radius: 2px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.cta__button:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.cta__button:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   SUBPAGE NAVIGATION
+   ============================================ */
+
+.subnav {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 0 4.8rem 2rem;
+  animation: fadeUp 0.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.subnav__link {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #888;
+  padding: 0.6rem 1.4rem;
+  border-radius: 4px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.subnav__link:hover {
+  color: #1c1c1c;
+  background-color: rgba(28, 28, 28, 0.06);
+}
+
+/* ============================================
    ABOUT
    ============================================ */
 
@@ -621,6 +688,12 @@ a {
   letter-spacing: -0.02em;
 }
 
+.pitch__rate-desc {
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #555;
+}
+
 .pitch__outcome {
   padding-top: 5rem;
   border-top: 1px solid rgba(28, 28, 28, 0.1);
@@ -803,6 +876,26 @@ a {
   opacity: 0.7;
 }
 
+.contact__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.contact__status {
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin-top: 1.2rem;
+  min-height: 2rem;
+}
+
+.contact__status--success {
+  color: #2a7d4f;
+}
+
+.contact__status--error {
+  color: #b44;
+}
+
 @media (max-width: 900px) {
   .contact {
     padding: 4rem 2.4rem;
@@ -954,6 +1047,15 @@ a {
     height: auto;
     aspect-ratio: 8 / 7;
   }
+
+  .cta {
+    padding: 3rem 2.4rem 1rem;
+  }
+
+  .subnav {
+    padding: 0 2.4rem 1.6rem;
+    flex-wrap: wrap;
+  }
 }
 
 @media (max-width: 480px) {
@@ -980,6 +1082,16 @@ a {
 
   .page-hero {
     padding: 0 1.6rem;
+  }
+
+  .subnav {
+    gap: 0.4rem;
+    padding: 0 1.6rem 1.6rem;
+  }
+
+  .subnav__link {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
   }
 }
 
@@ -1156,6 +1268,10 @@ a {
     border-color: rgba(255, 255, 255, 0.1);
   }
 
+  .pitch__rate-desc {
+    color: #999;
+  }
+
   .pitch__rate:hover {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
@@ -1230,5 +1346,31 @@ a {
   .contact__submit {
     background: #e5e5e5;
     color: #1a1a1a;
+  }
+
+  .contact__status--success {
+    color: #4aba7a;
+  }
+
+  .contact__status--error {
+    color: #e66;
+  }
+
+  .cta__text {
+    color: #999;
+  }
+
+  .cta__button {
+    background: #e5e5e5;
+    color: #1a1a1a;
+  }
+
+  .subnav__link {
+    color: #777;
+  }
+
+  .subnav__link:hover {
+    color: #e5e5e5;
+    background-color: rgba(255, 255, 255, 0.06);
   }
 }

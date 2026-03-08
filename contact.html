@@ -12,6 +12,8 @@
   <meta property="og:url" content="https://idrislamina.com/contact">
   <meta property="og:image" content="https://idrislamina.com/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#ebebeb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
   <link rel="canonical" href="https://idrislamina.com/contact">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,11 +25,20 @@
   <header class="header">
     <div class="header__left">
       <a href="/" class="header__back">
-        <span class="header__icon">✳</span>
+        <span class="header__icon" aria-hidden="true">✳</span>
         <span class="header__tagline">Back to home</span>
       </a>
     </div>
   </header>
+
+  <!-- Navigation -->
+  <nav class="subnav" aria-label="Main navigation">
+    <a href="/about" class="subnav__link">About</a>
+    <a href="/works" class="subnav__link">Consulting</a>
+    <a href="/portfolio" class="subnav__link">Projects</a>
+    <a href="/pitch" class="subnav__link">Services</a>
+    <a href="/contact" class="subnav__link">Contact</a>
+  </nav>
 
   <!-- Page Title -->
   <section class="page-hero">
@@ -69,7 +80,9 @@
       </div>
 
       <!-- Right: enquiry form -->
-      <form class="contact__form" action="https://formspree.io/f/mlgwlnyl" method="POST">
+      <form class="contact__form" id="contact-form" action="https://formspree.io/f/mlgwlnyl" method="POST">
+        <!-- Honeypot for spam -->
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
         <div class="contact__row">
           <div class="contact__field">
             <label class="contact__label" for="first-name">First Name</label>
@@ -85,13 +98,49 @@
           <input class="contact__input" type="email" id="email" name="email" required autocomplete="email">
         </div>
         <div class="contact__field">
-          <label class="contact__label" for="message">Message</label>
-          <textarea class="contact__textarea" id="message" name="message" rows="6"></textarea>
+          <label class="contact__label" for="message">Message *</label>
+          <textarea class="contact__textarea" id="message" name="message" rows="6" required></textarea>
         </div>
         <div class="contact__submit-wrap">
           <button class="contact__submit" type="submit">Send</button>
         </div>
+        <div id="form-status" class="contact__status" role="alert" aria-live="polite"></div>
       </form>
+
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = form.querySelector('.contact__submit');
+      const status = document.getElementById('form-status');
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      status.className = 'contact__status';
+      status.textContent = '';
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          status.textContent = 'Thanks for reaching out. I\'ll get back to you shortly.';
+          status.classList.add('contact__status--success');
+          form.reset();
+        } else {
+          status.textContent = 'Something went wrong. Please try again or email me directly.';
+          status.classList.add('contact__status--error');
+        }
+      } catch {
+        status.textContent = 'Something went wrong. Please try again or email me directly.';
+        status.classList.add('contact__status--error');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Send';
+    });
+  </script>
 
     </div>
   </section>
