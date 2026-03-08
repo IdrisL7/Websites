@@ -490,6 +490,32 @@ a {
   animation: fadeUp 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.portfolio__section-header {
+  padding-bottom: 3rem;
+  margin-bottom: 1rem;
+}
+
+.portfolio__section-title {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.8rem;
+}
+
+.portfolio__section-desc {
+  font-size: 1.5rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.portfolio__divider {
+  max-width: 88rem;
+  margin: 0 auto;
+  padding: 0 4.8rem;
+  border-bottom: 1px solid rgba(28, 28, 28, 0.1);
+}
+
 .portfolio__item {
   display: flex;
   gap: 3.2rem;
@@ -1233,6 +1259,14 @@ a {
 
   .portfolio__desc {
     color: #bbb;
+  }
+
+  .portfolio__section-desc {
+    color: #999;
+  }
+
+  .portfolio__divider {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
   }
 
   .portfolio__outcome {
