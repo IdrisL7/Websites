@@ -1,0 +1,208 @@
+import * as Sentry from "@sentry/nextjs";
+import { NextResponse } from "next/server";
+import { generateHooksForUrl, generateChannelVariants, scoreHookQuality, type Hook } from "@/lib/hooks";
+import { auth } from "@/lib/auth";
+import { checkTrialActive, checkBatchSize, getLimits } from "@/lib/tier-guard";
+import { researchIntentSignals, computeIntentScore, getTemperature } from "@/lib/intent";
+import { db, schema } from "@/lib/db";
+import { eq, sql } from "drizzle-orm";
+import type { TierId } from "@/lib/tiers";
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+type BatchItemInput = {
+  url: string;
+  pitchContext?: string;
+};
+
+type BatchRequest = {
+  items: BatchItemInput[];
+  maxHooksPerUrl?: number;
+};
+
+type BatchItemResult = {
+  url: string;
+  hooks: Hook[];
+  error: string | null;
+  suggestion?: string;
+  lowSignal?: boolean;
+  hookVariants?: Array<{ hook_index: number; variants: Array<{ channel: string; text: string }> }>;
+  intent?: { score: number; temperature: string; signalsCount: number } | null;
+};
+
+type BatchResponse = {
+  results: BatchItemResult[];
+};
+
+// ---------------------------------------------------------------------------
+// Route handler
+// ---------------------------------------------------------------------------
+
+export async function POST(request: Request) {
+  try {
+    // Auth check
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Trial check
+    const trialCheck = await checkTrialActive(session.user.id);
+    if (trialCheck) return trialCheck;
+
+    const body = (await request.json().catch(() => null)) as BatchRequest | null;
+
+    if (!body || !Array.isArray(body.items) || body.items.length === 0) {
+      return NextResponse.json(
+        { error: "Missing 'items' array in request body." },
+        { status: 400 },
+      );
+    }
+
+    // Get user tier
+    const [user] = await db
+      .select({ tierId: schema.users.tierId, hooksUsedThisMonth: schema.users.hooksUsedThisMonth })
+      .from(schema.users)
+      .where(eq(schema.users.id, session.user.id))
+      .limit(1);
+
+    const tierId = (user?.tierId as TierId) || "starter";
+    const limits = getLimits(tierId);
+
+    // Check batch size against tier limit
+    const batchCheck = checkBatchSize(tierId, body.items.length);
+    if (batchCheck) return batchCheck;
+
+    // Check remaining hook quota
+    const remaining = limits.hooksPerMonth - (user?.hooksUsedThisMonth ?? 0);
+    if (remaining < body.items.length) {
+      return NextResponse.json(
+        {
+          status: "error",
+          code: "TIER_LIMIT",
+          message: `You have ${remaining} hook generation${remaining !== 1 ? "s" : ""} remaining this month, but requested ${body.items.length}. Upgrade for more.`,
+        },
+        { status: 402 },
+      );
+    }
+
+    const maxHooksPerUrl = body.maxHooksPerUrl;
+
+    const results: BatchItemResult[] = await Promise.all(
+      body.items.map(async (item): Promise<BatchItemResult> => {
+        const url = item.url?.trim();
+
+        if (!url) {
+          return { url: "", hooks: [], error: "Missing url" };
+        }
+
+        try {
+          const result = await generateHooksForUrl({
+            url,
+            pitchContext: item.pitchContext,
+            count: maxHooksPerUrl,
+          });
+          let itemVariants: Array<{ hook_index: number; variants: Array<{ channel: string; text: string }> }> | undefined;
+          if ((tierId === "pro" || tierId === "concierge") && result.hooks.length > 0) {
+            try {
+              const claudeKey = process.env.CLAUDE_API_KEY!;
+              const withVars = await generateChannelVariants(result.hooks, claudeKey);
+              itemVariants = withVars.map((h, i) => ({ hook_index: i, variants: h.variants }));
+            } catch {}
+          }
+          let intentData: { score: number; temperature: string; signalsCount: number } | null = null;
+          if ((tierId === "pro" || tierId === "concierge") && result.hooks.length > 0) {
+            try {
+              const tavilyKey = process.env.TAVILY_API_KEY;
+              const claudeKey = process.env.CLAUDE_API_KEY;
+              if (tavilyKey && claudeKey) {
+                // Derive company name from URL hostname
+                let companyName: string;
+                try {
+                  companyName = new URL(url.startsWith("http") ? url : `https://${url}`).hostname.replace(/^www\./, "").split(".")[0];
+                } catch {
+                  companyName = url;
+                }
+                const signals = await researchIntentSignals(url, companyName, tavilyKey, claudeKey);
+                const score = computeIntentScore(signals);
+                intentData = {
+                  score,
+                  temperature: getTemperature(score),
+                  signalsCount: signals.length,
+                };
+              }
+            } catch {
+              // Non-blocking
+            }
+          }
+          return {
+            url,
+            hooks: result.hooks,
+            error: null,
+            suggestion: result.suggestion,
+            lowSignal: result.lowSignal,
+            hookVariants: itemVariants,
+            intent: intentData,
+          };
+        } catch (err) {
+          console.error(`generate-hooks-batch: failed for ${url}`, err);
+          return { url, hooks: [], error: "Failed to generate hooks" };
+        }
+      }),
+    );
+
+    // Persist batch hooks to history (generatedHooks table)
+    const hookInserts = results.flatMap((r) => {
+      if (r.error || r.hooks.length === 0) return [];
+      const batchId = crypto.randomUUID();
+      const domain = (() => {
+        try { return new URL(r.url.startsWith("http") ? r.url : `https://${r.url}`).hostname.replace(/^www\./, ""); }
+        catch { return r.url; }
+      })();
+      return r.hooks.map((h) => ({
+        userId: session.user!.id,
+        batchId,
+        companyUrl: r.url,
+        companyName: null as string | null,
+        hookText: h.hook,
+        angle: (h.angle as "trigger" | "risk" | "tradeoff") || "trigger",
+        confidence: (h.confidence as "high" | "med" | "low") || "med",
+        evidenceTier: (h.evidence_tier as "A" | "B" | "C") || "C",
+        qualityScore: h.quality_score ?? scoreHookQuality(h, domain),
+        sourceSnippet: h.evidence_snippet || null,
+        sourceUrl: h.source_url || null,
+        sourceTitle: h.source_title || null,
+        sourceDate: h.source_date || null,
+        triggerType: h.trigger_type || null,
+        promise: h.promise || null,
+        bridgeQuality: h.bridge_quality || null,
+      }));
+    });
+    if (hookInserts.length > 0) {
+      db.insert(schema.generatedHooks).values(hookInserts).catch(() => {});
+    }
+
+    // Increment hook usage by the number of successful results
+    const successCount = results.filter((r) => !r.error).length;
+    if (successCount > 0) {
+      await db
+        .update(schema.users)
+        .set({
+          hooksUsedThisMonth: sql`${schema.users.hooksUsedThisMonth} + ${successCount}`,
+        })
+        .where(eq(schema.users.id, session.user.id));
+    }
+
+    const response: BatchResponse = { results };
+    return NextResponse.json(response);
+  } catch (error) {
+    Sentry.captureException(error);
+    console.error("Unexpected error in /api/generate-hooks-batch", error);
+    return NextResponse.json(
+      { error: "Unexpected server error while generating hooks batch." },
+      { status: 500 },
+    );
+  }
+}

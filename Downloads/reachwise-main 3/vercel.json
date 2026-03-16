@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/onboarding-emails",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/integrations/slack",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/intent-refresh",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

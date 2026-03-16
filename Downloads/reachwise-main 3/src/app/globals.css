@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --animate-shimmer: shimmer 2s infinite;
+  --animate-fade-in: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-in-bottom: slideInFromBottom 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-scale-in: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-slide-in-right: slideInFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --color-canvas: #0a0a0b;
+  --color-surface: #141416;
+  --color-brand: #7c3aed;
+  --shadow-inner-glow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  --shadow-accent-glow: 0 0 20px -5px rgba(124, 58, 237, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0e0f10;
+    --foreground: #eceae6;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Shimmer animation for skeleton loaders */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* PrimeUI-style fade-in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Staggered children */
+.animate-fade-in-up:nth-child(1) { animation-delay: 0ms; }
+.animate-fade-in-up:nth-child(2) { animation-delay: 80ms; }
+.animate-fade-in-up:nth-child(3) { animation-delay: 160ms; }
+.animate-fade-in-up:nth-child(4) { animation-delay: 240ms; }
+.animate-fade-in-up:nth-child(5) { animation-delay: 320ms; }
+
+/* Staggered slide-in-bottom for hook cards */
+.animate-stagger-1 { animation: slideInFromBottom 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0ms both; }
+.animate-stagger-2 { animation: slideInFromBottom 0.35s cubic-bezier(0.16, 1, 0.3, 1) 100ms both; }
+.animate-stagger-3 { animation: slideInFromBottom 0.35s cubic-bezier(0.16, 1, 0.3, 1) 200ms both; }
+.animate-stagger-4 { animation: slideInFromBottom 0.35s cubic-bezier(0.16, 1, 0.3, 1) 300ms both; }
+.animate-stagger-5 { animation: slideInFromBottom 0.35s cubic-bezier(0.16, 1, 0.3, 1) 400ms both; }
